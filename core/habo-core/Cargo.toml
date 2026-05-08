@@ -8,3 +8,8 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 uuid = { version = "1", features = ["serde", "v4"] }
 chrono = { version = "0.4", features = ["serde"] }
+jsonwebtoken = "9"
+axum = "0.7"
+sqlx = { version = "0.8", features = ["postgres", "uuid", "chrono"] }
+rust_decimal = { version = "1", features = ["serde"] }
+tokio = { version = "1", features = ["full"] }
