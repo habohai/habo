@@ -140,7 +140,7 @@ pub struct UpdateProfileRequest {
 }
 
 /// 用户资料响应
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, sqlx::FromRow)]
 pub struct UserProfileResponse {
     pub user_id: uuid::Uuid,
     pub phone: String,
