@@ -1,0 +1,11 @@
+[workspace]
+resolver = "2"
+members = [
+    "backend/gateway",
+    "backend/auth",
+    "backend/user",
+    "backend/workout",
+    "backend/device",
+    "backend/model-router",
+    "core/habo-core",
+]

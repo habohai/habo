@@ -1,0 +1,34 @@
+# Dependencies
+target/
+.dart_tool/
+.packages
+.pub/
+build/
+flutter_*.png
+*.iml
+*.lock
+*.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+
+# Flutter
+mobile/android/.gradle/
+mobile/ios/Pods/
+
+# Tauri
+platform/src-tauri/target/
+
+# Rust
+**/target/
