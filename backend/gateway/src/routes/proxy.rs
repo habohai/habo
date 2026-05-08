@@ -1,6 +1,6 @@
 use axum::{
     body::Body,
-    extract::{Path, Request, State},
+    extract::{Request, State},
     http::StatusCode,
     response::Response,
 };
@@ -8,16 +8,18 @@ use std::sync::Arc;
 
 use crate::AppState;
 
-/// Proxy requests to internal services
+/// Proxy any request to the appropriate backend service
+/// Forwards `X-Habo-User-Id` header if user_id extension is present
 pub async fn proxy_handler(
     State(state): State<Arc<AppState>>,
-    Path(path): Path<String>,
     req: Request,
 ) -> Response {
-    let target_url = if path.starts_with("auth/") {
-        format!("{}/{}", state.auth_service_url, &path)
-    } else if path.starts_with("user/") {
-        format!("{}/{}", state.user_service_url, &path)
+    let path = req.uri().path();
+
+    let target_url = if path.starts_with("/auth/") {
+        format!("{}{}", state.auth_service_url, path)
+    } else if path.starts_with("/user/") {
+        format!("{}{}", state.user_service_url, path)
     } else {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
@@ -25,12 +27,17 @@ pub async fn proxy_handler(
             .unwrap();
     };
 
-    // Extract headers before consuming body
+    // Extract user_id from extension (set by JWT middleware) and Authorization header
     let auth_header = req
         .headers()
         .get("Authorization")
         .and_then(|v| v.to_str().ok())
         .map(|s| s.to_string());
+
+    let user_id = req
+        .extensions()
+        .get::<uuid::Uuid>()
+        .map(|id| id.to_string());
 
     let client = reqwest::Client::new();
     let method = req.method().clone();
@@ -43,9 +50,11 @@ pub async fn proxy_handler(
         .body(body_bytes)
         .header("Content-Type", "application/json");
 
-    // Forward Authorization header
     if let Some(auth) = auth_header {
         proxy_req = proxy_req.header("Authorization", auth);
+    }
+    if let Some(uid) = user_id {
+        proxy_req = proxy_req.header("X-Habo-User-Id", uid);
     }
 
     match proxy_req.send().await {

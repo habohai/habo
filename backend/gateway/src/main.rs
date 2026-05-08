@@ -41,7 +41,7 @@ async fn main() {
 
     // Protected routes (auth required)
     let protected_routes = Router::new()
-        .route("/user/{*path}", any(routes::proxy::proxy_handler))
+        .route("/user/*path", any(routes::proxy::proxy_handler))
         .route("/auth/bind-apple", post(routes::proxy::proxy_handler))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),

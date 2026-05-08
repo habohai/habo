@@ -13,7 +13,7 @@ pub async fn get_profile(
             u.phone,
             u.nickname,
             u.avatar_url,
-            COALESCE(p.gender, 0) as gender,
+            COALESCE(p.gender, 0::smallint) as gender,
             p.height_cm,
             p.weight_kg,
             COALESCE(p.running_goal, '') as running_goal,
