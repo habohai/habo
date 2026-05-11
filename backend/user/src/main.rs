@@ -24,7 +24,7 @@ async fn main() {
             "/user/profile",
             get(handlers::profile::get_my_profile).put(handlers::profile::update_profile),
         )
-        .route("/user/profile/{id}", get(handlers::profile::get_user_profile))
+        .route("/user/profile/:id", get(handlers::profile::get_user_profile))
         .with_state(pool);
 
     let addr = format!("0.0.0.0:{}", config.port);

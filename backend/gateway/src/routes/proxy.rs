@@ -16,10 +16,14 @@ pub async fn proxy_handler(
 ) -> Response {
     let path = req.uri().path();
 
-    let target_url = if path.starts_with("/auth/") {
+    let target_url = if path.starts_with("/auth/") || path == "/auth" {
         format!("{}{}", state.auth_service_url, path)
-    } else if path.starts_with("/user/") {
+    } else if path.starts_with("/user/") || path == "/user" {
         format!("{}{}", state.user_service_url, path)
+    } else if path.starts_with("/device/") || path == "/device" {
+        format!("{}{}", state.device_service_url, path)
+    } else if path.starts_with("/workout/") || path == "/workout" {
+        format!("{}{}", state.workout_service_url, path)
     } else {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)

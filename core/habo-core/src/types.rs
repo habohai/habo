@@ -153,3 +153,106 @@ pub struct UserProfileResponse {
     pub weekly_goal_km: Option<rust_decimal::Decimal>,
     pub created_at: chrono::DateTime<chrono::Utc>,
 }
+
+// ---- Device DTOs ----
+
+/// 绑定设备请求
+#[derive(Debug, Deserialize)]
+pub struct BindDeviceRequest {
+    pub device_type: String,
+    pub device_name: String,
+    pub config_json: Option<serde_json::Value>,
+}
+
+/// 设备绑定响应
+#[derive(Debug, Serialize, sqlx::FromRow)]
+pub struct DeviceBindingResponse {
+    pub id: uuid::Uuid,
+    pub user_id: uuid::Uuid,
+    pub device_type: String,
+    pub device_name: String,
+    pub is_active: bool,
+    pub config_json: serde_json::Value,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+}
+
+// ---- Workout DTOs ----
+
+/// 创建运动请求
+#[derive(Debug, Deserialize)]
+pub struct CreateWorkoutRequest {
+    pub device_id: Option<uuid::Uuid>,
+    pub sport_type: Option<String>,
+    pub started_at: chrono::DateTime<chrono::Utc>,
+    pub ended_at: Option<chrono::DateTime<chrono::Utc>>,
+    pub duration_secs: Option<i32>,
+    pub distance_meters: Option<rust_decimal::Decimal>,
+    pub avg_heart_rate: Option<i16>,
+    pub max_heart_rate: Option<i16>,
+    pub avg_pace_km: Option<rust_decimal::Decimal>,
+    pub calories_kcal: Option<i32>,
+    pub elevation_gain_m: Option<rust_decimal::Decimal>,
+    pub route_data: Option<serde_json::Value>,
+    pub splits_data: Option<serde_json::Value>,
+    pub sensor_data: Option<serde_json::Value>,
+    pub notes: Option<String>,
+}
+
+/// 更新运动请求
+#[derive(Debug, Deserialize)]
+pub struct UpdateWorkoutRequest {
+    pub ended_at: Option<chrono::DateTime<chrono::Utc>>,
+    pub duration_secs: Option<i32>,
+    pub distance_meters: Option<rust_decimal::Decimal>,
+    pub avg_heart_rate: Option<i16>,
+    pub max_heart_rate: Option<i16>,
+    pub avg_pace_km: Option<rust_decimal::Decimal>,
+    pub calories_kcal: Option<i32>,
+    pub elevation_gain_m: Option<rust_decimal::Decimal>,
+    pub route_data: Option<serde_json::Value>,
+    pub splits_data: Option<serde_json::Value>,
+    pub notes: Option<String>,
+}
+
+/// 运动记录响应（含所有详细数据）
+#[derive(Debug, Serialize, sqlx::FromRow)]
+pub struct WorkoutResponse {
+    pub id: uuid::Uuid,
+    pub user_id: uuid::Uuid,
+    pub device_id: Option<uuid::Uuid>,
+    pub sport_type: String,
+    pub status: String,
+    pub started_at: chrono::DateTime<chrono::Utc>,
+    pub ended_at: Option<chrono::DateTime<chrono::Utc>>,
+    pub duration_secs: Option<i32>,
+    pub distance_meters: Option<rust_decimal::Decimal>,
+    pub avg_heart_rate: Option<i16>,
+    pub max_heart_rate: Option<i16>,
+    pub avg_pace_km: Option<rust_decimal::Decimal>,
+    pub calories_kcal: Option<i32>,
+    pub elevation_gain_m: Option<rust_decimal::Decimal>,
+    pub route_data: serde_json::Value,
+    pub splits_data: serde_json::Value,
+    pub sensor_data: serde_json::Value,
+    pub source: String,
+    pub notes: String,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+}
+
+/// 运动列表项（不含详细传感器数据）
+#[derive(Debug, Serialize, sqlx::FromRow)]
+pub struct WorkoutListItem {
+    pub id: uuid::Uuid,
+    pub user_id: uuid::Uuid,
+    pub sport_type: String,
+    pub status: String,
+    pub started_at: chrono::DateTime<chrono::Utc>,
+    pub ended_at: Option<chrono::DateTime<chrono::Utc>>,
+    pub duration_secs: Option<i32>,
+    pub distance_meters: Option<rust_decimal::Decimal>,
+    pub avg_heart_rate: Option<i16>,
+    pub max_heart_rate: Option<i16>,
+    pub avg_pace_km: Option<rust_decimal::Decimal>,
+    pub calories_kcal: Option<i32>,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+}

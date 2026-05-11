@@ -15,6 +15,8 @@ pub struct AppState {
     pub jwt_secret: String,
     pub auth_service_url: String,
     pub user_service_url: String,
+    pub device_service_url: String,
+    pub workout_service_url: String,
 }
 
 #[tokio::main]
@@ -30,6 +32,8 @@ async fn main() {
         jwt_secret: cfg.jwt_secret,
         auth_service_url: cfg.auth_service_url,
         user_service_url: cfg.user_service_url,
+        device_service_url: cfg.device_service_url,
+        workout_service_url: cfg.workout_service_url,
     });
 
     // Public routes (no auth required)
@@ -41,7 +45,12 @@ async fn main() {
 
     // Protected routes (auth required)
     let protected_routes = Router::new()
+        .route("/user", any(routes::proxy::proxy_handler))
         .route("/user/*path", any(routes::proxy::proxy_handler))
+        .route("/device", any(routes::proxy::proxy_handler))
+        .route("/device/*path", any(routes::proxy::proxy_handler))
+        .route("/workout", any(routes::proxy::proxy_handler))
+        .route("/workout/*path", any(routes::proxy::proxy_handler))
         .route("/auth/bind-apple", post(routes::proxy::proxy_handler))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
